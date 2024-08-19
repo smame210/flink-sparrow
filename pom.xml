@@ -14,6 +14,7 @@
         <module>sparrow-api</module>
         <module>sparrow-core</module>
         <module>sparrow-connector</module>
+        <module>sparrow-plugin</module>
     </modules>
 
     <properties>
