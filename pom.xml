@@ -15,6 +15,7 @@
         <module>sparrow-core</module>
         <module>sparrow-connector</module>
         <module>sparrow-plugin</module>
+        <module>sparrow-support</module>
     </modules>
 
     <properties>

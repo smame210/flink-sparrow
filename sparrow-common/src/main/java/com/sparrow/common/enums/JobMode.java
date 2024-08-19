@@ -15,10 +15,10 @@ public enum JobMode {
         if (jobModeStr == null) {
             return null;
         }
-        return  Arrays.stream(JobMode.values())
+        return Arrays.stream(JobMode.values())
                 .filter(jobMode -> jobMode.name().equalsIgnoreCase(jobModeStr))
-               .findFirst()
-               .orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
 }
