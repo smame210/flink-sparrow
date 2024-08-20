@@ -1,0 +1,37 @@
+{
+    "env" : {
+        "jobName" : "example",
+        "jobType": "dataStream",
+        "jobMode": "streaming",
+        "sql" : "CREATE TABLE datagen_source(
+                   id  BIGINT,
+                   name STRING
+                 ) WITH (
+                   'connector' = 'datagen'
+                 );
+
+                 CREATE  TABLE blackhole_sink(
+                    id  BIGINT,
+                    name STRING
+                 ) WITH (
+                   'connector' = 'blackhole'
+                 );
+
+                 INSERT INTO blackhole_sink
+                 SELECT
+                    id  ,
+                    name
+                 from datagen_source;"
+    },
+    "plugins": {
+        "source": [
+
+        ],
+        "transform": [
+
+        ],
+        "sink": [
+
+        ]
+    }
+}

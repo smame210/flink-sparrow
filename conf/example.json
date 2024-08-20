@@ -1,0 +1,33 @@
+{
+    "env" : {
+        "jobName" : "example",
+        "jobType": "dataStream",
+        "jobMode": "streaming",
+        "parallelism": 1,
+        "restart.strategy": "never"
+    },
+    "plugins": {
+        "source": [
+            {
+                "id": "1",
+                "name":"Kafka-Source",
+                "bootstrapServers": "localhost:9092",
+                "topics": "test1",
+                "groupId": "test",
+                "startingOffsets": "latest"
+            }
+        ],
+        "transform": [
+
+        ],
+        "sink": [
+            {
+                "id": "2",
+                "name": "Kafka-Sink",
+                "bootstrapServers": "localhost:9092",
+                "topic": "test2",
+                "keyField": "id"
+            }
+        ]
+    }
+}
