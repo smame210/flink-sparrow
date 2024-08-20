@@ -14,6 +14,4 @@ public class PluginConfig implements Serializable {
     private String id;
 
     private String name;
-
-    private String type;
 }
