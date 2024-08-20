@@ -16,6 +16,7 @@
         <module>sparrow-connector</module>
         <module>sparrow-plugin</module>
         <module>sparrow-support</module>
+        <module>sparrow-package</module>
     </modules>
 
     <properties>
@@ -340,5 +341,16 @@
     </build>
 
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>sparrow-package</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

@@ -1,0 +1,57 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <id>bin</id>
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>../</directory>
+            <includes>
+                <include>README.md</include>
+                <include>README_CN.md</include>
+                <include>conf/**</include>
+                <include>plugins/**</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>../bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0777</fileMode>
+        </fileSet>
+
+    </fileSets>
+
+    <dependencySets>
+        <!-- ============ Starter Jars ============  -->
+        <dependencySet>
+            <unpack>false</unpack>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <scope>runtime</scope>
+            <includes>
+                <!-- groupId:artifactId:type:classifier -->
+                <include>com.sparrow:sparrow-core:jar</include>
+            </includes>
+            <outputFileNameMapping>${artifact.file.name}</outputFileNameMapping>
+            <outputDirectory>bin</outputDirectory>
+        </dependencySet>
+
+        <!-- ============ Plugins ============  -->
+        <dependencySet>
+            <unpack>false</unpack>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <scope>runtime</scope>
+            <includes>
+                <!-- contains all plugins -->
+                <include>com.sparrow.plugin:*:jar</include>
+            </includes>
+            <outputFileNameMapping>${artifact.file.name}</outputFileNameMapping>
+            <outputDirectory>plugins</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+</assembly>
