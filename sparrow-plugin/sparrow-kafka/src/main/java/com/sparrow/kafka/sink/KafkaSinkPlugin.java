@@ -36,6 +36,9 @@ public class KafkaSinkPlugin implements ISinkPlugin<DataRecord, KafkaSinkConfig>
     }
 
     private DeliveryGuarantee getDeliveryGuarantee(KafkaSinkConfig config) {
+        if (config.getDeliverGuarantee() == null) {
+            return DeliveryGuarantee.NONE;
+        }
         switch (config.getDeliverGuarantee().toLowerCase()) {
             case "at_least_once":
                 return DeliveryGuarantee.AT_LEAST_ONCE;
@@ -44,7 +47,7 @@ public class KafkaSinkPlugin implements ISinkPlugin<DataRecord, KafkaSinkConfig>
             case "none":
                 return DeliveryGuarantee.NONE;
             default:
-                return DeliveryGuarantee.NONE;
+                throw new IllegalArgumentException("Unsupported delivery guarantee: " + config.getDeliverGuarantee());
         }
     }
 }

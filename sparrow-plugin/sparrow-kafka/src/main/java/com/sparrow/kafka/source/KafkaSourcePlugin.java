@@ -39,6 +39,10 @@ public class KafkaSourcePlugin implements ISourcePlugin<DataRecord, KafkaSourceC
     }
 
     private OffsetsInitializer getStartingOffsets(KafkaSourceConfig config) {
+        if (config.getStartingOffsets() == null) {
+            return OffsetsInitializer.committedOffsets();
+        }
+
         switch (config.getStartingOffsets().toLowerCase()) {
             case "latest":
                 return OffsetsInitializer.latest();
@@ -65,18 +69,21 @@ public class KafkaSourcePlugin implements ISourcePlugin<DataRecord, KafkaSourceC
                 }
                 return OffsetsInitializer.offsets(offsets);
             default:
-                return OffsetsInitializer.committedOffsets();
+                throw new IllegalArgumentException("Unsupported starting offset type: " + config.getStartingOffsets());
         }
     }
 
     private  KafkaRecordDeserializationSchema<DataRecord> getDeserializer(KafkaSourceConfig config) {
+        if (config.getDeserializer() == null) {
+            return KafkaRecordDeserializationSchema.valueOnly(KafkaValueJsonDeserializer.class);
+        }
         switch (config.getDeserializer().toLowerCase()) {
             case "json":
                 return KafkaRecordDeserializationSchema.valueOnly(KafkaValueJsonDeserializer.class);
             case "string":
                 return KafkaRecordDeserializationSchema.valueOnly(KafkaValueStringDeserializer.class);
             default:
-                return KafkaRecordDeserializationSchema.valueOnly(KafkaValueJsonDeserializer.class);
+                throw new IllegalArgumentException("Unsupported deserializer type: " + config.getDeserializer());
         }
     }
 }
