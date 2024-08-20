@@ -9,6 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <groupId>com.sparrow.plugin</groupId>
     <artifactId>sparrow-plugin</artifactId>
     <packaging>pom</packaging>
 
@@ -32,6 +33,12 @@
         <dependency>
             <groupId>com.sparrow</groupId>
             <artifactId>sparrow-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sparrow</groupId>
+            <artifactId>sparrow-support</artifactId>
             <version>${project.version}</version>
         </dependency>
 

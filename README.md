@@ -11,4 +11,7 @@ flink-sparrow
 ├── sparrow-api            
 ├── sparrow-common         
 ├── sparrow-core           # include flink start main 
+├── sparrow-connector      # include flink connectors   
+├── sparrow-plugin         # custom plugins
+├── sparrow-support        # some utils , e.g. script execution etc. 
 ``` 
