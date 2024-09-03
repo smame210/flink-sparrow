@@ -1,30 +1,22 @@
 package com.sparrow.support.script;
 
-import java.io.Serializable;
-
 /**
  * @author daitf
  * @date 2024/8/18
  */
-public abstract class ScriptExecutor implements Serializable {
+public interface ScriptExecutor<T extends ScriptExecuteConfig> {
 
-    public ScriptExecutor init(){
-        return this;
-    }
+    ScriptTypeEnum scriptType();
 
-    public abstract ScriptTypeEnum scriptType();
+    boolean scriptExists(String id);
 
-    public abstract boolean scriptExists(String id);
+    boolean validate(T config);
 
-    public abstract boolean validateScript(ScriptExecuteConfig config);
+    void load(T config);
 
-    public abstract void reload(ScriptExecuteConfig config);
+    void unload(String id);
 
-    public abstract void load(ScriptExecuteConfig config);
+    Object compile(T config) throws Exception;
 
-    public abstract void unLoad(String id);
-
-    public abstract Object compile(ScriptExecuteConfig config) throws Exception;
-
-    public abstract Object executeScript(ScriptExecuteConfig config, Object... args) throws Exception;
+    Object execute(T config, Object... args) throws Exception;
 }

@@ -22,4 +22,8 @@ public enum ScriptTypeEnum {
         return Arrays.stream(ScriptTypeEnum.values())
                 .anyMatch(e -> e.getType().equalsIgnoreCase(scriptType));
     }
+
+    public static ScriptTypeEnum getScriptType(String scriptType) {
+        return ScriptTypeEnum.valueOf(scriptType.toUpperCase());
+    }
 }

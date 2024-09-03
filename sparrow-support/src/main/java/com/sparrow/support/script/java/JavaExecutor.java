@@ -2,7 +2,6 @@ package com.sparrow.support.script.java;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.sparrow.support.script.ScriptExecuteConfig;
 import com.sparrow.support.script.ScriptExecutor;
 import com.sparrow.support.script.ScriptTypeEnum;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author daitf
  * @date 2024/8/18
  */
-public class JavaExecutor extends ScriptExecutor {
+public class JavaExecutor implements ScriptExecutor<JavaScriptExecuteConfig> {
     private static final Map<String, IScriptEvaluator> compiledScriptMap = new ConcurrentHashMap<>();
 
     @Override
@@ -30,7 +29,7 @@ public class JavaExecutor extends ScriptExecutor {
     }
 
     @Override
-    public boolean validateScript(ScriptExecuteConfig config) {
+    public boolean validate(JavaScriptExecuteConfig config) {
         try {
             this.compile(config);
         } catch (Exception e) {
@@ -40,7 +39,7 @@ public class JavaExecutor extends ScriptExecutor {
     }
 
     @Override
-    public void reload(ScriptExecuteConfig config) {
+    public void load(JavaScriptExecuteConfig config) {
         try {
             compiledScriptMap.put(config.getId(), (IScriptEvaluator) this.compile(config));
         } catch (Exception e) {
@@ -49,27 +48,17 @@ public class JavaExecutor extends ScriptExecutor {
     }
 
     @Override
-    public void load(ScriptExecuteConfig config) {
-        try {
-            compiledScriptMap.put(config.getId(), (IScriptEvaluator) this.compile(config));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void unLoad(String id) {
+    public void unload(String id) {
         compiledScriptMap.remove(id);
     }
 
     @Override
-    public Object compile(ScriptExecuteConfig config) throws Exception {
-        JavaScriptExecuteConfig javaScriptExecuteConfig = (JavaScriptExecuteConfig) config;
+    public Object compile(JavaScriptExecuteConfig config) throws Exception {
         IScriptEvaluator se = CompilerFactoryFactory.getDefaultCompilerFactory(this.getClass().getClassLoader()).newScriptEvaluator();
         se.setTargetVersion(8);
         se.setReturnType(Object.class);
-        se.setParameters(javaScriptExecuteConfig.getArgNameArray(), javaScriptExecuteConfig.getArgTypeArray());
-        se.cook(this.convertScript(config.getScript(), javaScriptExecuteConfig.getArgNameArray()));
+        se.setParameters(config.getArgNames(), config.getArgTypes());
+        se.cook(this.convertScript(config.getScript(), config.getArgNames()));
         return se;
     }
 
@@ -78,9 +67,12 @@ public class JavaExecutor extends ScriptExecutor {
                 .replace("public class", "class")
                 .replace("private class", "class")
                 .replace("protected class", "class");
-        String className = ReUtil.getGroup1("class\\s+(\\w+)\\s+\\{", script1);
+        String className = ReUtil.getGroup1("class\\s+(\\w+)\\s*\\{", script1);
         if (StringUtils.isBlank(className)) {
-            throw new RuntimeException("cannot find class defined");
+            throw new RuntimeException("cannot find class defined or not implements 'JavaTemplate' interface");
+        }
+        if (!ReUtil.contains("(main\\()([^\\)]*)(\\))", script1)) {
+            throw new RuntimeException("cannot find main method defined");
         }
 
         return script1 + "\n" +
@@ -89,7 +81,7 @@ public class JavaExecutor extends ScriptExecutor {
     }
 
     @Override
-    public Object executeScript(ScriptExecuteConfig config, Object... args) throws Exception {
+    public Object execute(JavaScriptExecuteConfig config, Object... args) throws Exception {
         if (!compiledScriptMap.containsKey(config.getId())) {
             throw new RuntimeException("No script found for id: " + config.getId());
         }

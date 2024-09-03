@@ -1,11 +1,8 @@
 package com.sparrow.support.script.java;
 
-import cn.hutool.core.collection.CollUtil;
 import com.sparrow.support.script.ScriptExecuteConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.List;
 
 /**
  * @author daitf
@@ -14,21 +11,16 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class JavaScriptExecuteConfig extends ScriptExecuteConfig {
-    private List<String> argNames;
+    private String[] argNames = new String[0];
 
-    private List<Class<?>> argTypes;
+    private Class<?>[] argTypes = new Class[0];
 
-    public String[] getArgNameArray() {
-        if (CollUtil.isEmpty(argNames)) {
-            return new String[0];
-        }
-        return argNames.toArray(new String[0]);
-    }
+    public JavaScriptExecuteConfig(){}
 
-    public Class[] getArgTypeArray() {
-        if (CollUtil.isEmpty(argTypes)) {
-            return new Class[0];
-        }
-        return argTypes.toArray(new Class[0]);
+    public JavaScriptExecuteConfig(String id, String script, String[] argNames, Class<?>[] argTypes){
+        this.setId(id);
+        this.setScript(script);
+        this.setArgNames(argNames);
+        this.setArgTypes(argTypes);
     }
 }
