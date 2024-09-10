@@ -31,7 +31,7 @@ public class KafkaSinkPlugin implements ISinkPlugin<DataRecord, KafkaSinkConfig>
         return KafkaSink.<DataRecord>builder()
                 .setBootstrapServers(config.getBootstrapServers())
                 .setRecordSerializer(kafkaRecordSerializationSchema)
-                .setDeliverGuarantee(this.getDeliveryGuarantee(config))
+                .setDeliveryGuarantee(this.getDeliveryGuarantee(config))
                 .build();
     }
 

@@ -75,13 +75,13 @@ public class KafkaSourcePlugin implements ISourcePlugin<DataRecord, KafkaSourceC
 
     private  KafkaRecordDeserializationSchema<DataRecord> getDeserializer(KafkaSourceConfig config) {
         if (config.getDeserializer() == null) {
-            return KafkaRecordDeserializationSchema.valueOnly(KafkaValueJsonDeserializer.class);
+            return KafkaRecordDeserializationSchema.of(new KafkaValueJsonDeserializationSchema());
         }
         switch (config.getDeserializer().toLowerCase()) {
             case "json":
-                return KafkaRecordDeserializationSchema.valueOnly(KafkaValueJsonDeserializer.class);
+                return KafkaRecordDeserializationSchema.of(new KafkaValueJsonDeserializationSchema());
             case "string":
-                return KafkaRecordDeserializationSchema.valueOnly(KafkaValueStringDeserializer.class);
+                return KafkaRecordDeserializationSchema.of(new KafkaValueStringDeserializationSchema());
             default:
                 throw new IllegalArgumentException("Unsupported deserializer type: " + config.getDeserializer());
         }
