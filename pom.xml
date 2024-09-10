@@ -26,7 +26,7 @@
 
         <jdk.version>11</jdk.version>
         <flink.scope>provided</flink.scope>
-        <flink.version>1.15.0</flink.version>
+        <flink.version>1.17.2</flink.version>
         <scala.binary.version>2.12</scala.binary.version>
         <scala.version>2.12.10</scala.version>
         <log4j.version>2.17.2</log4j.version>
@@ -365,12 +365,29 @@
     <profiles>
         <profile>
             <id>dev</id>
+            <properties>
+                <flink.scope>compile</flink.scope>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <modules>
-                <module>sparrow-package</module>
-            </modules>
+            <properties>
+                <flink.scope>provided</flink.scope>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>flink-1.17</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <flink.version>1.17.2</flink.version>
+            </properties>
         </profile>
     </profiles>
 
