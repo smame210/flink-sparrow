@@ -16,10 +16,27 @@ import java.io.UnsupportedEncodingException;
 public class KafkaValueSerializationSchema implements SerializationSchema<DataRecord> {
     private String encoding = "UTF8";
 
+    private String format = "json";
+
+    public KafkaValueSerializationSchema(String format) {
+        this.format = format;
+    }
+
     @Override
     public byte[] serialize(DataRecord data) {
         try {
-            return data == null ? null : JSON.toJSONString(data.getData()).getBytes(this.encoding);
+            if (data == null) {
+                return null;
+            }
+
+            switch (this.format) {
+                case "json":
+                    return JSON.toJSONString(data.getData()).getBytes(this.encoding);
+                case "string":
+                        return data.getData().toString().getBytes(this.encoding);
+                default:
+                    return JSON.toJSONString(data.getData()).getBytes(this.encoding);
+            }
         } catch (UnsupportedEncodingException e) {
             throw new SerializationException("Error when serializing key string to byte[] due to unsupported encoding " + this.encoding);
         } catch (Exception e) {

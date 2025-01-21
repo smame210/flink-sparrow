@@ -24,8 +24,8 @@ public class KafkaSinkPlugin implements ISinkPlugin<DataRecord, KafkaSinkConfig>
     public Sink<DataRecord> getSinkFunction(KafkaSinkConfig config) {
         KafkaRecordSerializationSchema<DataRecord> kafkaRecordSerializationSchema =KafkaRecordSerializationSchema.builder()
                 .setTopic(config.getTopic())
-                .setKeySerializationSchema(new KafkaKeySerializationSchema(config.getKeyField()))
-                .setValueSerializationSchema(new KafkaValueSerializationSchema())
+                .setKeySerializationSchema(new KafkaKeySerializationSchema())
+                .setValueSerializationSchema(new KafkaValueSerializationSchema(config.getFormat()))
                 .build();
 
         return KafkaSink.<DataRecord>builder()

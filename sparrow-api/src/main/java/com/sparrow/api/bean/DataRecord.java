@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,75 +20,79 @@ public class DataRecord implements Serializable {
     @Getter
     private long timestamp = -1;
 
-    private JSONObject config;
+    private JSONObject header;
 
-    private JSONObject data;
+    @Setter
+    @Getter
+    private Object data;
 
     public DataRecord() {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public DataRecord(Map<String, Object> map) {
-        this.config = new JSONObject();
-        this.data = new JSONObject(map);
-        this.timestamp = System.currentTimeMillis();
-    }
-
-    public DataRecord(Map<String, Object> config, Map<String, Object> data) {
-        this.config = new JSONObject(config);
-        this.data = new JSONObject(data);
-        this.timestamp = System.currentTimeMillis();
-    }
-
-    public JSONObject getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> map) {
-        this.data = new JSONObject(map);
-    }
-
-    public void setData(JSONObject data) {
+    public DataRecord(Object data) {
+        this.header = new JSONObject();
         this.data = data;
+        this.timestamp = System.currentTimeMillis();
     }
 
-    public JSONObject getConfig() {
-        return config;
+    public DataRecord(Map<String, Object> header, Object data) {
+        this.header = new JSONObject(header);
+        this.data = data;
+        this.timestamp = System.currentTimeMillis();
     }
 
-    public void setConfig(Map<String, Object> map) {
-        this.config = new JSONObject(map);
+    public JSONObject getHeader() {
+        return header;
     }
 
-    public void setConfig(JSONObject config) {
-        this.config = config;
+    public void setHeader(Map<String, Object> map) {
+        if (map == null || map.isEmpty()){
+            return;
+        }
+        this.header = new JSONObject(map);
     }
 
-    public Object getField(String fieldPath) {
-        return JsonUtil.getField(this.data, fieldPath);
+    public void setHeader(JSONObject config) {
+        if (config == null){
+            return;
+        }
+        this.header = config;
     }
 
-    public void setField(String fieldPath, Object value) {
-        JsonUtil.setField(this.data, fieldPath, value);
+    public void addHeader(Map<String, Object> map) {
+        if (map == null || map.isEmpty()){
+            return;
+        }
+        this.header.putAll(map);
     }
 
-    public Object getConfigField(String fieldPath) {
-        return JsonUtil.getField(this.config, fieldPath);
+    public void removeHeader(List<String> keys) {
+        if (keys == null || keys.isEmpty()){
+            return;
+        }
+        for (String key : keys) {
+            this.header.remove(key);
+        }
     }
 
-    public void setConfigField(String fieldPath, Object value) {
-        JsonUtil.setField(this.config, fieldPath, value);
+    public Object getHeaderField(String fieldPath) {
+        return JsonUtil.getField(this.header, fieldPath);
+    }
+
+    public void setHeaderField(String fieldPath, Object value) {
+        JsonUtil.setField(this.header, fieldPath, value);
     }
 
     public DataRecord copy() {
         DataRecord dataRecord = new DataRecord();
-        dataRecord.config = config.clone();
-        dataRecord.data = data.clone();
+        dataRecord.header = header.clone();
+        dataRecord.data = data;
         return dataRecord;
     }
 
     @Override
     public String toString() {
-        return "DataRecord{timestamp=" + timestamp + ", config=" + config.toJSONString() + ", data=" + data.toJSONString() + '}';
+        return "DataRecord{timestamp=" + timestamp + ", header=" + header.toJSONString() + ", data=" + data.toString() + '}';
     }
 }

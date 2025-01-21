@@ -20,9 +20,9 @@ public class KafkaSinkConfig extends PluginConfig {
     private String topic;
 
     /**
-     * the key field of kafka message
+     * the serialization format of kafka message. support JSON, STRING. default is JSON.
      */
-    private String keyField;
+    private String format;
 
     /**
      * support NONE, AT_LEAST_ONCE, EXACTLY_ONCE. default is NONE.

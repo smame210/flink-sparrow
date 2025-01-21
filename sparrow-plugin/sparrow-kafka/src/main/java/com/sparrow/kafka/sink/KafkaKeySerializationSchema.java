@@ -2,7 +2,6 @@ package com.sparrow.kafka.sink;
 
 import com.sparrow.api.bean.DataRecord;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.kafka.common.errors.SerializationException;
 
@@ -16,23 +15,16 @@ import java.io.UnsupportedEncodingException;
 public class KafkaKeySerializationSchema implements SerializationSchema<DataRecord> {
     private String encoding = "UTF8";
 
-    private String keyField;
-
-    public KafkaKeySerializationSchema(String keyField) {
-        this.keyField = keyField;
-    }
-
     @Override
     public byte[] serialize(DataRecord data) {
         try {
-            if (StringUtils.isEmpty(keyField)) {
+            if (data.getHeader() == null || data.getHeader().isEmpty()) {
                 return null;
             }
 
-            if (data == null) {
-                return null;
-            }
-            return data.getField(keyField) == null ? null : data.getField(keyField).toString().getBytes(encoding);
+            // get kafka key from header
+            Object key = data.getHeaderField("$.kafka.key");
+            return key == null ? null : key.toString().getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
             throw new SerializationException("Error when serializing key string to byte[] due to unsupported encoding " + this.encoding);
         } catch (Exception e) {
