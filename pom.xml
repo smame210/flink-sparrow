@@ -8,15 +8,14 @@
     <artifactId>flink-sparrow</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <modules>
 
+    <modules>
         <module>sparrow-common</module>
         <module>sparrow-api</module>
         <module>sparrow-core</module>
         <module>sparrow-connector</module>
         <module>sparrow-plugin</module>
         <module>sparrow-support</module>
-        <module>sparrow-package</module>
     </modules>
 
     <properties>
@@ -133,6 +132,13 @@
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-table-runtime</artifactId>
+                <version>${flink.version}</version>
+                <scope>${flink.scope}</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-connector-kafka</artifactId>
                 <version>${flink.version}</version>
                 <scope>${flink.scope}</scope>
             </dependency>
@@ -365,6 +371,9 @@
     <profiles>
         <profile>
             <id>dev</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <properties>
                 <flink.scope>compile</flink.scope>
             </properties>
@@ -378,6 +387,9 @@
             <properties>
                 <flink.scope>provided</flink.scope>
             </properties>
+            <modules>
+                <module>sparrow-package</module>
+            </modules>
         </profile>
 
         <profile>

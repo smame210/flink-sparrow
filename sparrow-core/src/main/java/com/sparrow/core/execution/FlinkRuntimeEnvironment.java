@@ -9,6 +9,8 @@ import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -31,15 +33,15 @@ public class FlinkRuntimeEnvironment {
 
     private StreamTableEnvironment tableEnv;
 
-    @Getter
-    private String jobName = DEFAULT_JOB_NAME;
+    private final JSONObject config;
 
     private JobMode jobMode = JobMode.STREAMING;
 
-    private JSONObject config;
+    @Getter
+    private String jobName = DEFAULT_JOB_NAME;
 
     @Getter
-    private String JobType = DEFAULT_JOB_TYPE;
+    private String jobType = DEFAULT_JOB_TYPE;
 
     private FlinkRuntimeEnvironment(JSONObject config) {
         this.config = config;
@@ -53,7 +55,7 @@ public class FlinkRuntimeEnvironment {
         }
         // jobType
         if (config.containsKey(JOB_TYPE)) {
-            this.JobType = config.getString(JOB_TYPE);
+            this.jobType = config.getString(JOB_TYPE);
         }
         // streamEnv
         createStreamEnvironment();
@@ -62,7 +64,15 @@ public class FlinkRuntimeEnvironment {
     }
 
     private void createStreamEnvironment() {
-        streamEnv = StreamExecutionEnvironment.getExecutionEnvironment();
+        // load pipeline classpaths
+        Configuration configuration = new Configuration();
+        if (config.containsKey(PIPELINE_CLASSPATHS)) {
+            configuration.set(PipelineOptions.CLASSPATHS, config.getList(PIPELINE_CLASSPATHS, String.class));
+        }
+        if (config.containsKey(PIPELINE_JARS)) {
+            configuration.set(PipelineOptions.JARS, config.getList(PIPELINE_JARS, String.class));
+        }
+        streamEnv = StreamExecutionEnvironment.getExecutionEnvironment(configuration);
         int parallelism = config.containsKey(PARALLELISM) ? config.getInteger(PARALLELISM) : 1;
         streamEnv.setParallelism(parallelism);
         if (this.jobMode.equals(JobMode.BATCH)) {

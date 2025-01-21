@@ -32,7 +32,8 @@ public class FlinkTaskExecutor implements TaskExecutor {
     public void execute() {
         JSONObject config = parseConfig();
         ConfigCheckUtil.checkConfig(config);
-        flinkRuntimeEnvironment = FlinkRuntimeEnvironment.getInstance(config.getJSONObject(ENV));
+        JSONObject envConfig = config.getJSONObject(ENV);
+        flinkRuntimeEnvironment = FlinkRuntimeEnvironment.getInstance(envConfig);
         if ("sql".equalsIgnoreCase(flinkRuntimeEnvironment.getJobType())) {
             // flink sql job
             if (!config.containsKey("sql")) {
@@ -41,6 +42,7 @@ public class FlinkTaskExecutor implements TaskExecutor {
             Configuration configuration = flinkRuntimeEnvironment.getStreamTableEnvironment().getConfig().getConfiguration();
             configuration.setString("pipeline.name", flinkRuntimeEnvironment.getJobName());
             String sqlContent = config.getString("sql");
+            // TODO parse sql
             String[] sqlStatements = sqlContent.split(";");
             for (String sqlStatement : sqlStatements) {
                 sqlStatement = sqlStatement.trim();

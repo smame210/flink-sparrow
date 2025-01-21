@@ -4,6 +4,7 @@ import com.sparrow.api.config.PluginConfig;
 import com.sparrow.api.plugin.transform.ITransformPlugin;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ServiceLoader;
 
 /**
@@ -23,6 +24,15 @@ public class TransformPluginFactory {
     }
 
     public static Class<? extends PluginConfig> getPluginConfigClass(ITransformPlugin plugin) {
-        return (Class) ((ParameterizedType) plugin.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Type[] genericInterfaces = plugin.getClass().getGenericInterfaces();
+        for (Type genericInterface : genericInterfaces) {
+            if (genericInterface instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+                if (parameterizedType.getRawType().equals(ITransformPlugin.class)) {
+                    return (Class) parameterizedType.getActualTypeArguments()[0];
+                }
+            }
+        }
+        throw new IllegalArgumentException("No plugin config found for plugin: " + plugin.getClass().getName());
     }
 }

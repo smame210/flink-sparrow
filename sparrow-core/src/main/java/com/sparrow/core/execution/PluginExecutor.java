@@ -37,7 +37,7 @@ public class PluginExecutor{
     }
 
     public void execute() {
-        // todo
+        // todo support multi source and sink
         // source plugin
         JSONObject source = pluginConfig.getJSONArray(ConfigConstants.SOURCE).getJSONObject(0);
         String sourcePluginName = source.getString(ConfigConstants.PLUGIN_NAME);

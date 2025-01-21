@@ -21,6 +21,9 @@ public class FlinkEnvironmentConstants {
 
     public static final String RESTART_STRATEGY = "restart.strategy";
 
+    public static final String PIPELINE_CLASSPATHS = "pipeline.classpaths";
+    public static final String PIPELINE_JARS = "pipeline.jars";
+
     public static final String RESTART_ATTEMPTS = "restart.attempts";
     public static final String RESTART_DELAY_BETWEEN_ATTEMPTS = "restart.delayBetweenAttempts";
 
