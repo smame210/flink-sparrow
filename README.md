@@ -33,7 +33,7 @@ cd sparrow-package-${project.version}/bin
 ./bin/flink run -c com.sparrow.core.starter.FlinkStarter /path/to/sparrow-core.jar -j ${example.json}
 ``` 
 
-### 启动参数
+### Start Options
 ```
 -n/--name  job name
 -f/--file  json config file path

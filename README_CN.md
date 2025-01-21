@@ -27,7 +27,7 @@ cd sparrow-package/target
 tar -zxvf sparrow-package-${project.version}.tar.gz
 cd sparrow-package-${project.version}/bin
 
-# 上传 sparrow-core.jar 到flink集群, 然后添加运行参数并运行jar包
+# 上传sparrow-core.jar到flink集群, 然后添加运行参数并运行jar包
 # 配置文件示例在conf目录下
 ./bin/flink run -c com.sparrow.core.starter.FlinkStarter /path/to/sparrow-core.jar -j ${example.json}
 ``` 
