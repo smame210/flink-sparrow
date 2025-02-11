@@ -5,10 +5,13 @@ import cn.hutool.core.util.StrUtil;
 import com.sparrow.support.script.ScriptExecutor;
 import com.sparrow.support.script.ScriptTypeEnum;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.commons.compiler.CompilerFactoryFactory;
-import org.codehaus.commons.compiler.IScriptEvaluator;
+import org.noear.liquor.eval.CodeSpec;
+import org.noear.liquor.eval.Execable;
+import org.noear.liquor.eval.ParamSpec;
+import org.noear.liquor.eval.Scripts;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2024/8/18
  */
 public class JavaExecutor implements ScriptExecutor<JavaScriptExecuteConfig> {
-    private static final Map<String, IScriptEvaluator> compiledScriptMap = new ConcurrentHashMap<>();
+    private static final Map<String, Execable> compiledScriptMap = new ConcurrentHashMap<>();
 
     @Override
     public ScriptTypeEnum scriptType() {
@@ -41,7 +44,7 @@ public class JavaExecutor implements ScriptExecutor<JavaScriptExecuteConfig> {
     @Override
     public void load(JavaScriptExecuteConfig config) {
         try {
-            compiledScriptMap.put(config.getId(), (IScriptEvaluator) this.compile(config));
+            compiledScriptMap.put(config.getId(), (Execable) this.compile(config));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,12 +57,21 @@ public class JavaExecutor implements ScriptExecutor<JavaScriptExecuteConfig> {
 
     @Override
     public Object compile(JavaScriptExecuteConfig config) throws Exception {
-        IScriptEvaluator se = CompilerFactoryFactory.getDefaultCompilerFactory(this.getClass().getClassLoader()).newScriptEvaluator();
-        se.setTargetVersion(8);
-        se.setReturnType(Object.class);
-        se.setParameters(config.getArgNames(), config.getArgTypes());
-        se.cook(this.convertScript(config.getScript(), config.getArgNames()));
-        return se;
+        String[] argNameArray = config.getArgNames();
+        Class<?>[] argTypeArray = config.getArgTypes();
+        if (argNameArray.length != argTypeArray.length) {
+            throw new IllegalArgumentException("argNameArray and argTypeArray length not match");
+        }
+
+        Entry<String, Class<?>>[] entries = new Entry[argNameArray.length];
+        for (int i = 0; i < argNameArray.length; i++) {
+            entries[i] = new ParamSpec(argNameArray[i], argTypeArray[i]);
+        }
+
+        CodeSpec codeSpec = new CodeSpec(this.convertScript(config.getScript(), config.getArgNames()))
+                .returnType(Object.class)
+                .parameters(entries);
+        return Scripts.compile(codeSpec);
     }
 
     private String convertScript(String script, String[] argNames) {
@@ -85,7 +97,7 @@ public class JavaExecutor implements ScriptExecutor<JavaScriptExecuteConfig> {
         if (!compiledScriptMap.containsKey(config.getId())) {
             throw new RuntimeException("No script found for id: " + config.getId());
         }
-        IScriptEvaluator se = compiledScriptMap.get(config.getId());
-        return se.evaluate(args);
+        Execable se = compiledScriptMap.get(config.getId());
+        return se.exec(args);
     }
 }

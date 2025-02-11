@@ -15,6 +15,7 @@
 
     <modules>
         <module>sparrow-kafka</module>
+        <module>sparrow-script</module>
         <module>sparrow-plugin-base</module>
     </modules>
 

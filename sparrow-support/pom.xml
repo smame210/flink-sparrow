@@ -24,8 +24,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
+            <groupId>org.noear</groupId>
+            <artifactId>liquor-eval</artifactId>
         </dependency>
 
         <dependency>
